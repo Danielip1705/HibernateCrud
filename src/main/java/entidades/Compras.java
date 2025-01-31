@@ -1,13 +1,22 @@
 package entidades;
 
-import java.time.LocalDate;
+import java.io.Serializable;
+import java.sql.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 
 @Entity
 @Table(name = "Compras")
-public class Compras {
+public class Compras implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -16,13 +25,13 @@ public class Compras {
 	
 	//Relacion con la tabla player
 	@ManyToOne
-	@JoinColumn(name = "player_id",
+	@JoinColumn(name = "idPlayer",
 	foreignKey = @ForeignKey(name = "PLAYER_ID_FK"))
 	private Player player;
 	
 	//Relacion con la tabla games
 	@ManyToOne
-	@JoinColumn(name = "games_id",
+	@JoinColumn(name = "idGames",
 	foreignKey = @ForeignKey(name = "GAMES_ID_FK"))
 	private Games game;
 	
@@ -33,24 +42,23 @@ public class Compras {
 	private double precio;
 	
 	@Column(name = "fechaCompra")
-	private LocalDate fechaCompra;
+	private Date fechaCompra;
 	
 	public Compras() {
 		
 	}
 	
-	// Constructor que acepta solo los IDs de Player y Game
-    public Compras(int idPlayer, int idGame, String cosa, double precio, LocalDate fechaCompra) {
-        // Aquí puedes asignar los valores de cosa, precio y fechaCompra directamente
-        this.cosa = cosa;
-        this.precio = precio;
-        this.fechaCompra = fechaCompra;
-        // Crear objetos Player y Game usando sus IDs (esto dependerá de cómo gestionas el acceso a las entidades)
-        this.player = new Player();  // Instanciar el objeto Player
-        this.player.setIdPlayer(idPlayer);  // Asignar el ID al objeto Player
-        this.game = new Games();  // Instanciar el objeto Game
-        this.game.setIdGames(idGame);  // Asignar el ID al objeto Game
-    }
+	
+
+	public Compras(Player player, Games game, String cosa, double precio, Date fechaCompra) {
+		this.player = player;
+		this.game = game;
+		this.cosa = cosa;
+		this.precio = precio;
+		this.fechaCompra = fechaCompra;
+	}
+
+
 
 	public int getIdCompras() {
 		return idCompras;
@@ -92,11 +100,11 @@ public class Compras {
 		this.precio = precio;
 	}
 
-	public LocalDate getFechaCompra() {
+	public Date getFechaCompra() {
 		return fechaCompra;
 	}
 
-	public void setFechaCompra(LocalDate fechaCompra) {
+	public void setFechaCompra(Date fechaCompra) {
 		this.fechaCompra = fechaCompra;
 	}
     

@@ -1,11 +1,13 @@
 package entidades;
+import java.io.Serializable;
 import java.sql.Time;
+import java.time.LocalTime;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "Games")
-public class Games {
+public class Games implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -16,13 +18,13 @@ public class Games {
 	private String nombre;
 	
 	@Column(name="tiempoJugado")
-	private Time tiempoJugado;
+	private LocalTime tiempoJugado;
 	
 	public Games() {
 		
 	}
 	
-	public Games(String nombre,Time tiempo) {
+	public Games(String nombre,LocalTime tiempo) {
 		this.nombre = nombre;
 		this.tiempoJugado = tiempo;
 	}
@@ -39,11 +41,11 @@ public class Games {
 		this.idGames = idGames;
 	}
 
-	public Time getTiempoJugado() {
+	public LocalTime getTiempoJugado() {
 		return tiempoJugado;
 	}
 
-	public void setTiempoJugado(Time tiempoJugado) {
+	public void setTiempoJugado(LocalTime tiempoJugado) {
 		this.tiempoJugado = tiempoJugado;
 	}
 

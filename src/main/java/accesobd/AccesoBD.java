@@ -1,4 +1,7 @@
-import org.hibernate.Session; 
+package accesobd;
+import javax.persistence.EntityManager;
+
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.MetadataSources;
@@ -7,9 +10,10 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 
 
 public class AccesoBD {
-	private SessionFactory sf;
+	private static SessionFactory sf;
 	private Session sesion;
 	private Transaction transaction;
+	private EntityManager ent;
 
 	protected void setUp() throws Exception {
 
@@ -64,5 +68,13 @@ public class AccesoBD {
 		// Llama al método save de la sesión para persistir el objeto en la base de
 		// datos
 		return sesion.save(cosa);
+	}
+
+	public EntityManager getEnt() {
+		return ent;
+	}
+
+	public void setEnt(EntityManager ent) {
+		this.ent = ent;
 	}
 }

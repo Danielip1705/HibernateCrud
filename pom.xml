@@ -10,7 +10,6 @@
         <junit.version>5.9.1</junit.version>
     </properties>
 	
-	
     <dependencies>
         <dependency>
             <groupId>org.hibernate</groupId>
