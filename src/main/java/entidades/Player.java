@@ -10,7 +10,7 @@ public class Player implements Serializable{
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	@Column(name = "idPlayer")
-	private int idPlayer;
+	private long idPlayer;
 	
 	@Column(name = "nick")
 	private String nick;
@@ -25,6 +25,12 @@ public class Player implements Serializable{
 		
 	}
 	
+	
+	public Player(long idPlayer) {
+		this.idPlayer = idPlayer;
+	}
+
+
 	public Player(String nick,String pasw,String email) {
 		this.nick=nick;
 		this.password=pasw;
@@ -55,11 +61,11 @@ public class Player implements Serializable{
 		this.email = email;
 	}
 
-	public int getIdPlayer() {
+	public long getIdPlayer() {
 		return idPlayer;
 	}
 
-	public void setIdPlayer(int idPlayer) {
+	public void setIdPlayer(long idPlayer) {
 		this.idPlayer = idPlayer;
 	}
 	

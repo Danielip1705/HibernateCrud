@@ -21,17 +21,17 @@ public class Compras implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name = "idCompras")
-	private int idCompras;
+	private long idCompras;
 	
 	//Relacion con la tabla player
 	@ManyToOne
-	@JoinColumn(name = "idPlayer",
+	@JoinColumn(name = "id_player",
 	foreignKey = @ForeignKey(name = "PLAYER_ID_FK"))
 	private Player player;
 	
 	//Relacion con la tabla games
 	@ManyToOne
-	@JoinColumn(name = "idGames",
+	@JoinColumn(name = "id_games",
 	foreignKey = @ForeignKey(name = "GAMES_ID_FK"))
 	private Games game;
 	
@@ -60,12 +60,8 @@ public class Compras implements Serializable{
 
 
 
-	public int getIdCompras() {
+	public long getIdCompras() {
 		return idCompras;
-	}
-
-	public void setIdCompras(int idCompras) {
-		this.idCompras = idCompras;
 	}
 
 	public Player getPlayer() {

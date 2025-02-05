@@ -12,7 +12,7 @@ public class Games implements Serializable {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	@Column(name = "idGames")
-	private int idGames;
+	private long idGames;
 	
 	@Column(name = "nombre")
 	private String nombre;
@@ -24,6 +24,14 @@ public class Games implements Serializable {
 		
 	}
 	
+	
+	
+	public Games(long idGames) {
+		this.idGames = idGames;
+	}
+
+
+
 	public Games(String nombre,LocalTime tiempo) {
 		this.nombre = nombre;
 		this.tiempoJugado = tiempo;
@@ -37,7 +45,7 @@ public class Games implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public void setIdGames(int idGames) {
+	public void setIdGames(long idGames) {
 		this.idGames = idGames;
 	}
 
@@ -49,7 +57,7 @@ public class Games implements Serializable {
 		this.tiempoJugado = tiempoJugado;
 	}
 
-	public int getIdGames() {
+	public long getIdGames() {
 		return idGames;
 	}
 	
