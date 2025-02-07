@@ -13,7 +13,6 @@ public class AccesoBD {
 	private static SessionFactory sf;
 	private Session sesion;
 	private Transaction transaction;
-	private EntityManager ent;
 
 	protected void setUp() throws Exception {
 
@@ -34,6 +33,11 @@ public class AccesoBD {
 
 	public Session getSesion() {
 		return sesion;
+	}
+	
+
+	public Transaction getTransaction() {
+		return transaction;
 	}
 
 	// Método para abrir una nueva sesión de Hibernate y comenzar una transacción
@@ -70,11 +74,5 @@ public class AccesoBD {
 		return sesion.save(cosa);
 	}
 
-	public EntityManager getEnt() {
-		return ent;
-	}
 
-	public void setEnt(EntityManager ent) {
-		this.ent = ent;
-	}
 }

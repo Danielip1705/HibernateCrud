@@ -294,7 +294,7 @@ public class CRUD {
 						System.out.println("4. Fecha Completa");
 						opc = sc.nextInt();
 						sc.nextLine();
-						switch(opc) {
+						switch (opc) {
 						case 1:
 							indiqueAño();
 							FuncionesCompra.listarFecha(año, 0, 0, null, opc);
@@ -328,6 +328,116 @@ public class CRUD {
 					System.out.println(OPC_INVALIDA);
 				}
 				break;
+			// Modificar
+			case 4:
+				System.out.println("¿Que tabla quieres modificar?");
+				opcionesEntidades();
+				opc = sc.nextInt();
+				sc.nextLine();
+				switch (opc) {
+				//Modificar jugadores
+				case 1:
+					System.out.println("¿Indica el filtro?");
+					System.out.println("1. Por Id");
+					System.out.println("2. Por Nick");
+					opc = sc.nextInt();
+					sc.nextLine();
+					//Filtro elegido
+					switch(opc) {
+					case 1:
+						FuncionesPlayer.listaPlayers();
+						System.out.println("Indica el id de la persona a modificar");
+						idPlayer = sc.nextLong();
+						sc.nextLine();
+						atributosAModificarPlayer();
+						opc = sc.nextInt();
+						sc.nextLine();
+						//Switch para modificar atributos player
+						switch(opc) {
+						case 1:
+							System.out.println("Indica el nick nuevo");
+							nick = sc.nextLine();
+							FuncionesPlayer.modificarJugador(idPlayer, nick, null, null, null, opc);
+							break;
+						case 2:
+							System.out.println("Indica la contraseña nueva");
+							password = sc.nextLine();
+							FuncionesPlayer.modificarJugador(idPlayer, null, null, password, null, opc);
+							break;
+						case 3:
+							System.out.println("Indique el correo nuevo");
+							email = sc.nextLine();
+							FuncionesPlayer.modificarJugador(idPlayer, null, null, null, email, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					case 2:
+						FuncionesPlayer.listaPlayers();
+						System.out.println("Indique el nombre o letra a modificar");
+						filtro = sc.nextLine();
+						atributosAModificarPlayer();
+						opc = sc.nextInt();
+						sc.nextLine();
+						//Switch para modificar atributos player
+						switch(opc) {
+						case 1:
+							System.out.println("Indica el nick nuevo");
+							nick = sc.nextLine();
+							FuncionesPlayer.modificarJugador(0, nick, filtro, null, null, opc);
+							break;
+						case 2:
+							System.out.println("Indica la contraseña nueva");
+							password = sc.nextLine();
+							FuncionesPlayer.modificarJugador(0, null, filtro, password, null, opc);
+							break;
+						case 3:
+							System.out.println("Indique el correo nuevo");
+							email = sc.nextLine();
+							FuncionesPlayer.modificarJugador(0, null, filtro, null, email, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					default:
+						System.out.println(OPC_INVALIDA);
+					}
+					break;
+				//Modificar juegos
+				case 2:
+					System.out.println("Indica el filtro");
+					System.out.println("1. Id");
+					System.out.println("2. Nombre");
+					opc = sc.nextInt();
+					sc.nextLine();
+					//Filtro elegido
+					switch(opc) {
+					case 1:
+						
+						break;
+						
+					case 2:
+						break;
+						
+					default: 
+						System.out.println(OPC_INVALIDA);
+					}
+					break;
+				//Modificar compras
+				case 3:
+					
+					break;
+				default:
+					System.out.println(OPC_INVALIDA);
+				}
+				break;
+			// Eliminar
+			case 5:
+
+				break;
+
 			default:
 				System.out.println(OPC_INVALIDA);
 			}
@@ -339,6 +449,13 @@ public class CRUD {
 		// Cerramos scanner
 		sc.close();
 
+	}
+
+	private static void atributosAModificarPlayer() {
+		System.out.println("¿Que quieres modificar?");
+		System.out.println("1. Nick");
+		System.out.println("2. Contraseña");
+		System.out.println("3. Correo");
 	}
 
 	private static void menuFiltro() {

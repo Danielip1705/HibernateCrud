@@ -2,15 +2,15 @@ package funciones;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Scanner;
 
 import accesobd.AccesoBD;
-import entidades.Games;
 import entidades.Games;
 
 public class FuncionesGames {
 
 	public static AccesoBD ins = new AccesoBD();
-
+	static Scanner sc = new Scanner(System.in);
 	public static void crearGames(Games game) {
 		try {
 			ins.abrir();
@@ -126,6 +126,84 @@ public class FuncionesGames {
 	}
 
 	// -------------------------------------------------------------------------------------------
+	//Modificar Juego
+	public static void ModificarJuego(long id,String nombreNuevo,String nombreFiltro,LocalTime tiempoNuevo,int filtro) {
+		Games g = null;
+		String confirmacion ="";
+		List<Games> listado = null;
+		try {
+			if(id!=0) {
+				g = ins.getSesion().get(Games.class, id);
+			} else {
+				listado = ins.getSesion().createNativeQuery("SELECT * FROM Games where nombre like :nombre ;",Games.class)
+						.setParameter("nombre", "%"+nombreFiltro+"%").getResultList();
+			}
+			if(g!=null) {
+				switch (filtro) {
+				case 1:
+					g.setNombre(nombreFiltro);
+					break;
+				case 2:
+					g.setTiempoJugado(tiempoNuevo);
+					break;
+				}
+				System.out.println("ID: " + g.getIdGames());
+				System.out.println("Nombre: " + g.getNombre());
+				System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
+				confirmacion = confirmarTransac();
+				
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					ins.getSesion().merge(g);
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			} else {
+				for (Games games : listado) {
+					switch (filtro) {
+					case 1:
+						games.setNombre(nombreFiltro);
+						break;
+					case 2:
+						games.setTiempoJugado(tiempoNuevo);
+						break;
+					}
+				}
+				for (Games games : listado) {
+					System.out.println("ID: " + games.getIdGames());
+					System.out.println("Nombre: " + games.getNombre());
+					System.out.println("Tiempo Jugado: " + games.getTiempoJugado().toString());
+				}
+				confirmacion = confirmarTransac();
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					for (Games games : listado) {
+						ins.getSesion().update(games);
+					}
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	private static String confirmarTransac() {
+		String confirmacion;
+		System.out.println("¿Quieres confirmar la transaccion? Indique S(Si) o N(No)");
+		confirmacion = sc.nextLine().toLowerCase();
+		
+		while (!confirmacion.equals("s") && !confirmacion.equals("n")) {
+			System.out.println("Indique S o N, no es tan conplicado");
+			confirmacion = sc.nextLine();
+		}
+		return confirmacion;
+	}
+	
+	//--------------------------------------------------------------------------------------------
 	public static Games buscarGamesId(long id) {
 		Games games = null;
 		try {

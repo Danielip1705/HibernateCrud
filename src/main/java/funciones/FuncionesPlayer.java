@@ -1,11 +1,14 @@
 package funciones;
 import java.util.List;
+import java.util.Scanner;
 
 import accesobd.AccesoBD;
 import entidades.Player;
 public class FuncionesPlayer {
 	
 	public static AccesoBD ins = new AccesoBD();
+	static Scanner sc = new Scanner(System.in);
+	
 	
 	public static void crearPlayer(Player player) {
 			try {
@@ -124,6 +127,105 @@ public class FuncionesPlayer {
 	}
 	
 	//-----------------------------------------------------------------------------------------------------
+	
+	//Modificar
+	
+	public static void modificarJugador(long id,String nuevoNick,String nickfiltro,String nuevaConstraseña,String nuevoEmail,int filtro) {
+		Player p = null;
+		String confirmacion = "";
+		List<Player> listado = null;
+		try {
+			ins.abrir();
+			
+			if(id!=0) {
+				p = ins.getSesion().get(Player.class, id);				
+			} else {
+				listado = ins.getSesion().createNativeQuery("SELECT * FROM Player where nick like :nick ;",Player.class)
+						.setParameter("nick", "%"+nickfiltro+"%").getResultList();
+			}
+			
+			if(p!=null) {
+				switch(filtro) {
+				case 1:
+					p.setNick(nuevoNick);
+					break;
+				case 2:
+					p.setPassword(nuevaConstraseña);
+					break;
+				case 3:
+					p.setEmail(nuevoEmail);
+					break;
+				}
+				System.out.println("¿Seguro que quieres modificar este jugador?");
+				System.out.println("IdPlayer: "+p.getIdPlayer());
+				System.out.println("Nick: "+p.getNick());
+				System.out.println("Contraseña: "+p.getPassword());
+				System.out.println("Email: "+p.getEmail());
+				System.out.println("===========================");	
+				confirmacion = confirmarTransac();
+				
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					ins.getSesion().update(p);
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			} else {
+				//For para actualizar
+				for (Player player : listado) {
+					switch(filtro) {
+					case 1:
+						player.setNick(nuevoNick);
+						break;
+					case 2:
+						player.setPassword(nuevaConstraseña);
+						break;
+					case 3:
+						player.setEmail(nuevoEmail);
+						break;
+					}
+				}
+				//For para confirmar transaccion
+				for (Player player : listado) {
+					System.out.println("IdPlayer: "+player.getIdPlayer());
+					System.out.println("Nick: "+player.getNick());
+					System.out.println("Contraseña: "+player.getPassword());
+					System.out.println("Email: "+player.getEmail());
+					System.out.println("===========================");	
+				}
+				confirmacion = confirmarTransac();
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					for (Player player : listado) {
+						ins.getSesion().update(player);
+					}
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			}
+			
+			ins.cerrar();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+
+	private static String confirmarTransac() {
+		String confirmacion;
+		System.out.println("¿Quieres confirmar la transaccion? Indique S(Si) o N(No)");
+		confirmacion = sc.nextLine().toLowerCase();
+		
+		while (!confirmacion.equals("s") && !confirmacion.equals("n")) {
+			System.out.println("Indique S o N, no es tan conplicado");
+			confirmacion = sc.nextLine();
+		}
+		return confirmacion;
+	}
+	
+	//----------------------------------------------------------------------------------------------------
 	public static boolean comprobarJugador(int id) {
 		boolean existe = false;
 		try {
