@@ -56,7 +56,7 @@ public class FuncionesGames {
 		Games g = null;
 		try {
 			ins.abrir();
-			g = ins.getSesion().load(Games.class, id);
+			g = ins.getSesion().get(Games.class, id);
 			if (g != null) {
 				System.out.println("==============================");
 				System.out.println("ID: " + g.getIdGames());
@@ -132,6 +132,7 @@ public class FuncionesGames {
 		String confirmacion ="";
 		List<Games> listado = null;
 		try {
+			ins.abrir();
 			if(id!=0) {
 				g = ins.getSesion().get(Games.class, id);
 			} else {
@@ -141,7 +142,7 @@ public class FuncionesGames {
 			if(g!=null) {
 				switch (filtro) {
 				case 1:
-					g.setNombre(nombreFiltro);
+					g.setNombre(nombreNuevo);
 					break;
 				case 2:
 					g.setTiempoJugado(tiempoNuevo);
@@ -159,11 +160,11 @@ public class FuncionesGames {
 					System.out.println("Transaccion cancelada");
 					ins.getTransaction().rollback();
 				}
-			} else {
+			} else if(listado.size()>0) {
 				for (Games games : listado) {
 					switch (filtro) {
 					case 1:
-						games.setNombre(nombreFiltro);
+						games.setNombre(nombreNuevo);
 						break;
 					case 2:
 						games.setTiempoJugado(tiempoNuevo);
@@ -186,6 +187,7 @@ public class FuncionesGames {
 					ins.getTransaction().rollback();
 				}
 			}
+			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -208,7 +210,7 @@ public class FuncionesGames {
 		Games games = null;
 		try {
 			ins.abrir();
-			games = ins.getSesion().load(Games.class, id);
+			games = ins.getSesion().get(Games.class, id);
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception

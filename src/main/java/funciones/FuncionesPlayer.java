@@ -56,8 +56,8 @@ public class FuncionesPlayer {
 		Player p = null;
 		try {
 			ins.abrir();
-			p = ins.getSesion().load(Player.class, id);
-			if(!p.getNick().equals(null)) {
+			p = ins.getSesion().get(Player.class, id);
+			if(p!=null) {
 				System.out.println("==============================");
 				System.out.println("IdPlayer: "+p.getIdPlayer());
 				System.out.println("Nick: "+p.getNick());
@@ -171,7 +171,7 @@ public class FuncionesPlayer {
 					System.out.println("Transaccion cancelada");
 					ins.getTransaction().rollback();
 				}
-			} else {
+			} else if(listado.size()>0) {
 				//For para actualizar
 				for (Player player : listado) {
 					switch(filtro) {
@@ -247,7 +247,7 @@ public class FuncionesPlayer {
 		Player player = null;
 		try {
 			ins.abrir();
-			player = ins.getSesion().load(Player.class, id);
+			player = ins.getSesion().get(Player.class, id);
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception

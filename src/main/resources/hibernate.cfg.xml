@@ -12,7 +12,7 @@
 			test integrado -->
 		<property name="connection.pool_size">1</property>
 		<!--Seleccionamos el dialecto SQL -->
-		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</property>
 		<!-- Configurar SQL para salida estándar -->
 		<property name="show_sql">true</property>
 		<!-- Establece el contexto de la sesion -->

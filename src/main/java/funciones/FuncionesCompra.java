@@ -2,13 +2,19 @@ package funciones;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Scanner;
+
+import org.hibernate.exception.ConstraintViolationException;
 
 import accesobd.AccesoBD;
 import entidades.Compras;
+import entidades.Games;
+import entidades.Player;
 
 public class FuncionesCompra {
 
 	public static AccesoBD ins = new AccesoBD();
+	static Scanner sc = new Scanner(System.in);
 
 	public static void crearCompra(Compras compra) {
 		try {
@@ -24,7 +30,7 @@ public class FuncionesCompra {
 				System.out.println("======================================");
 			}
 			ins.cerrar();
-		} catch (NullPointerException e) {
+		} catch (ConstraintViolationException e) {
 			System.out.println("La compra contiene un id de juego o jugador que no existe");
 		} catch (IllegalStateException e) {
 			System.out.println("Tiempo de espera finalizado: No se ha podido conectar a la BD");
@@ -61,7 +67,7 @@ public class FuncionesCompra {
 		Compras c = null;
 		try {
 			ins.abrir();
-			c = ins.getSesion().load(Compras.class, id);
+			c = ins.getSesion().get(Compras.class, id);
 			if(c!= null) {
 				System.out.println("==============================");
 				System.out.println("IdCompras: " + c.getIdCompras());
@@ -259,4 +265,122 @@ public class FuncionesCompra {
 		}
 	}
 	// ---------------------------------------------------------------------------------------------------------
+
+	//Modificar
+	
+	public static void modificarCompra(long id,long idPlayer,long idGames,String cosa,double precio,Date fechaCompra,long idPlayerFiltro,long idGamesFiltro,String cosaFiltro,int opc) {
+		Compras c = null;
+		Player p = null;
+		Games g = null;
+		String confirmacion = "";
+		List<Compras> listado = null;
+		try {
+			ins.abrir();
+			if(id!=0) {
+				c = ins.getSesion().get(Compras.class, id);
+			} else if(idPlayerFiltro!=0) {
+				listado = ins.getSesion().createNativeQuery("select * from Compras where id_player = :id ;",Compras.class)
+						.setParameter("id", idPlayerFiltro).getResultList();
+			} else if(idGamesFiltro!=0) {
+				listado = ins.getSesion().createNativeQuery("select * from Compras where id_games = :id ;",Compras.class)
+						.setParameter("id", idGamesFiltro).getResultList();
+			} else {
+				listado = ins.getSesion().createNativeQuery("select * from Compras where cosa = :cosa ;",Compras.class)
+						.setParameter("cosa", cosaFiltro).getResultList();
+			}
+			if(c!=null) {
+				switch(opc) {
+				case 1:
+					p = FuncionesPlayer.obtenerJugadorId(idPlayer);
+					c.setPlayer(p);
+					break;
+				case 2:
+					g = FuncionesGames.buscarGamesId(idGames);
+					c.setGame(g);
+					break;
+				case 3:
+					c.setCosa(cosa);
+					break;
+				case 4:
+					c.setPrecio(precio);
+					break;
+				case 5:
+					c.setFechaCompra(fechaCompra);
+					break;
+				}
+				System.out.println("IdCompras: " + c.getIdCompras());
+				System.out.println("IdPlayer: " + c.getPlayer().getIdPlayer());
+				System.out.println("IdGames: " + c.getGame().getIdGames());
+				System.out.println("Cosa : " + c.getCosa());
+				System.out.println("Precio: " + c.getPrecio());
+				System.out.println("Fecha Registro: " + c.getFechaCompra().toString());
+				System.out.println("===========================");
+				confirmacion = confirmarTransac();
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					ins.getSesion().merge(c);
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			} else if(listado.size() >0) {
+				for (Compras com : listado) {
+					switch(opc) {
+					case 1:
+						p = FuncionesPlayer.obtenerJugadorId(idPlayer);
+						com.setPlayer(p);
+						break;
+					case 2:
+						g = FuncionesGames.buscarGamesId(idGames);
+						com.setGame(g);
+						break;
+					case 3:
+						com.setCosa(cosa);
+						break;
+					case 4:
+						com.setPrecio(precio);
+						break;
+					case 5:
+						com.setFechaCompra(fechaCompra);
+						break;
+					}
+				}
+				for (Compras com : listado) {
+					System.out.println("IdCompras: " + com.getIdCompras());
+					System.out.println("IdPlayer: " + com.getPlayer().getIdPlayer());
+					System.out.println("IdGames: " + com.getGame().getIdGames());
+					System.out.println("Cosa : " + com.getCosa());
+					System.out.println("Precio: " + com.getPrecio());
+					System.out.println("Fecha Registro: " + com.getFechaCompra().toString());
+					System.out.println("===========================");
+				}
+				confirmacion = confirmarTransac();
+				if(confirmacion.equals("s")) {
+					System.out.println("Transaccion confirmada");
+					for (Compras com : listado) {
+						ins.getSesion().update(com);
+					}
+				} else {
+					System.out.println("Transaccion cancelada");
+					ins.getTransaction().rollback();
+				}
+			}
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
+	private static String confirmarTransac() {
+		String confirmacion;
+		System.out.println("¿Quieres confirmar la transaccion? Indique S(Si) o N(No)");
+		confirmacion = sc.nextLine().toLowerCase();
+		
+		while (!confirmacion.equals("s") && !confirmacion.equals("n")) {
+			System.out.println("Indique S o N, no es tan conplicado");
+			confirmacion = sc.nextLine();
+		}
+		return confirmacion;
+	}
+	//----------------------------------------------------------------------------------------------------------
 }

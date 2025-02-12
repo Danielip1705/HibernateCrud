@@ -42,6 +42,8 @@ public class CRUD {
 		// Variables para el funcionamiento del programa
 		int opc = -1;
 		String filtro = "";
+		long playerFiltroId = 0;
+		long gameFiltroId = 0;
 		final String OPC_INVALIDA = "Pelelín, esta opcion no existe >:[";
 		do {
 
@@ -116,7 +118,7 @@ public class CRUD {
 					indiqueAño();
 					indiqueMes();
 					indiqueDia();
-					fechaCompra = Date.valueOf(LocalDate.of(año, mes, dia));
+					fechaCompra = crearFecha();
 					if (player == null) {
 						System.out.println("No se pudo realizar la creacion, el id del jugador no existe");
 					} else if (game == null) {
@@ -311,7 +313,7 @@ public class CRUD {
 							indiqueAño();
 							indiqueMes();
 							indiqueDia();
-							fechaCompra = Date.valueOf(LocalDate.of(año, mes, dia));
+							fechaCompra = crearFecha();
 							FuncionesCompra.listarFecha(0, 0, 0, fechaCompra, opc);
 							break;
 						default:
@@ -335,25 +337,25 @@ public class CRUD {
 				opc = sc.nextInt();
 				sc.nextLine();
 				switch (opc) {
-				//Modificar jugadores
+				// Modificar jugadores
 				case 1:
 					System.out.println("¿Indica el filtro?");
 					System.out.println("1. Por Id");
 					System.out.println("2. Por Nick");
 					opc = sc.nextInt();
 					sc.nextLine();
-					//Filtro elegido
-					switch(opc) {
+					FuncionesPlayer.listaPlayers();
+					// Filtro elegido
+					switch (opc) {
 					case 1:
-						FuncionesPlayer.listaPlayers();
 						System.out.println("Indica el id de la persona a modificar");
 						idPlayer = sc.nextLong();
 						sc.nextLine();
 						atributosAModificarPlayer();
 						opc = sc.nextInt();
 						sc.nextLine();
-						//Switch para modificar atributos player
-						switch(opc) {
+						// Switch para modificar atributos player
+						switch (opc) {
 						case 1:
 							System.out.println("Indica el nick nuevo");
 							nick = sc.nextLine();
@@ -374,14 +376,13 @@ public class CRUD {
 						}
 						break;
 					case 2:
-						FuncionesPlayer.listaPlayers();
 						System.out.println("Indique el nombre o letra a modificar");
 						filtro = sc.nextLine();
 						atributosAModificarPlayer();
 						opc = sc.nextInt();
 						sc.nextLine();
-						//Switch para modificar atributos player
-						switch(opc) {
+						// Switch para modificar atributos player
+						switch (opc) {
 						case 1:
 							System.out.println("Indica el nick nuevo");
 							nick = sc.nextLine();
@@ -405,29 +406,266 @@ public class CRUD {
 						System.out.println(OPC_INVALIDA);
 					}
 					break;
-				//Modificar juegos
+				// Modificar juegos
 				case 2:
 					System.out.println("Indica el filtro");
 					System.out.println("1. Id");
 					System.out.println("2. Nombre");
 					opc = sc.nextInt();
 					sc.nextLine();
-					//Filtro elegido
-					switch(opc) {
+					FuncionesGames.listaGames();
+					// Filtro elegido
+					switch (opc) {
+					// Elegir id(filtro)
 					case 1:
-						
+						System.out.println("Indica el id a modificar");
+						idGames = sc.nextLong();
+						sc.nextLine();
+						atributosAModificarGames();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						// Modificar nombre
+						case 1:
+							System.out.println("Indique el nombre nuevo");
+							nombre = sc.nextLine();
+							FuncionesGames.ModificarJuego(idGames, nombre, null, null, opc);
+							break;
+						// Modificar compra
+						case 2:
+							System.out.println("Indique el tiempo nuevo");
+							indicarHoras();
+							indicarMinutos();
+							tiempoJugado = LocalTime.of(hora, min);
+							FuncionesGames.ModificarJuego(idGames, null, null, tiempoJugado, opc);
+							break;
+
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
 						break;
-						
+					// Elegir nombre o letra(filtro)
 					case 2:
+						System.out.println("Indique el nombre del juego a modificar");
+						filtro = sc.nextLine();
+						atributosAModificarGames();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						case 1:
+							System.out.println("Indique el nombre nuevo");
+							nombre = sc.nextLine();
+							FuncionesGames.ModificarJuego(0, nombre, filtro, null, opc);
+							break;
+						case 2:
+							System.out.println("Indique el tiempo nuevo");
+							indicarHoras();
+							indicarMinutos();
+							tiempoJugado = LocalTime.of(hora, min);
+							FuncionesGames.ModificarJuego(0, null, filtro, tiempoJugado, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
 						break;
-						
-					default: 
+					default:
 						System.out.println(OPC_INVALIDA);
 					}
 					break;
-				//Modificar compras
+				// Modificar compras
 				case 3:
-					
+					System.out.println("Indica el filtro");
+					System.out.println("1. Id");
+					System.out.println("2. Id Juego");
+					System.out.println("3. Id Games");
+					System.out.println("4. Cosa");
+					opc = sc.nextInt();
+					sc.nextLine();
+					FuncionesCompra.listaCompras();
+					switch (opc) {
+					// Modificar por id
+					case 1:
+						System.out.println("indica el id a modificar");
+						idCompra = sc.nextLong();
+						sc.nextLine();
+						atributosAModificarCompra();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						case 1:
+							System.out.println("Indique el id del jugador nuevo");
+							idPlayer = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(idCompra, idPlayer, 0, null, 0, null, 0, 0, null, opc);
+							break;
+						case 2:
+							System.out.println("Indique el id del juego nuevo");
+							idGames = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(idCompra, 0, idGames, null, 0, null, 0, 0, null, opc);
+							break;
+						case 3:
+							System.out.println("Indica la cosa nueva");
+							cosa = sc.nextLine();
+							FuncionesCompra.modificarCompra(idCompra, 0, 0, cosa, 0, null, 0, 0, null, opc);
+							break;
+						case 4:
+							System.out.println("Indica el precio nuevo");
+							precio = sc.nextDouble();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(idCompra, 0, 0, null, precio, null, 0, 0, null, opc);
+							break;
+						case 5:
+							System.out.println("Indica la fecha nueva:");
+							indiqueAño();
+							indiqueMes();
+							indiqueDia();
+							fechaCompra = crearFecha();
+							FuncionesCompra.modificarCompra(idCompra, opc, opc, OPC_INVALIDA, opc, fechaCompra, 0, 0,
+									null, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					// Modificar por juego
+					case 2:
+						System.out.println("Indique el id del jugador a modificar");
+						playerFiltroId = sc.nextLong();
+						sc.nextLine();
+						atributosAModificarCompra();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						case 1:
+							System.out.println("Indique el id del jugador nuevo");
+							idPlayer = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, idPlayer, 0, null, 0, null, playerFiltroId, 0, null,
+									opc);
+							break;
+						case 2:
+							System.out.println("Indique el id del juego nuevo");
+							idGames = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, idGames, null, 0, null, playerFiltroId, 0, null, opc);
+							break;
+						case 3:
+							System.out.println("Indica la cosa nueva");
+							cosa = sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, cosa, 0, null, playerFiltroId, 0, null, opc);
+							break;
+						case 4:
+							System.out.println("Indica el precio nuevo");
+							precio = sc.nextDouble();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, null, precio, null, playerFiltroId, 0, null, opc);
+							break;
+						case 5:
+							System.out.println("Indica la fecha nueva:");
+							indiqueAño();
+							indiqueMes();
+							indiqueDia();
+							fechaCompra = crearFecha();
+							FuncionesCompra.modificarCompra(0, opc, opc, OPC_INVALIDA, opc, fechaCompra, playerFiltroId,
+									0, null, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					// Modificar por juego
+					case 3:
+						System.out.println("Indique el id del juego a modificar");
+						gameFiltroId = sc.nextLong();
+						sc.nextLine();
+						atributosAModificarCompra();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						case 1:
+							System.out.println("Indique el id del jugador nuevo");
+							idPlayer = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, idPlayer, 0, null, 0, null, 0, gameFiltroId, null, opc);
+							break;
+						case 2:
+							System.out.println("Indique el id del juego nuevo");
+							idGames = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, idGames, null, 0, null, 0, gameFiltroId, null, opc);
+							break;
+						case 3:
+							System.out.println("Indica la cosa nueva");
+							cosa = sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, cosa, 0, null, 0, gameFiltroId, null, opc);
+							break;
+						case 4:
+							System.out.println("Indica el precio nuevo");
+							precio = sc.nextDouble();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, null, precio, null, 0, gameFiltroId, null, opc);
+							break;
+						case 5:
+							System.out.println("Indica la fecha nueva:");
+							indiqueAño();
+							indiqueMes();
+							indiqueDia();
+							fechaCompra = crearFecha();
+							FuncionesCompra.modificarCompra(0, opc, opc, OPC_INVALIDA, opc, fechaCompra, 0,
+									gameFiltroId, null, opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					// Modificar por cosa
+					case 4:
+						System.out.println("Indique el objeto de compra de los jugadores a modificar");
+						filtro = sc.nextLine();
+						atributosAModificarCompra();
+						opc = sc.nextInt();
+						sc.nextLine();
+						switch (opc) {
+						case 1:
+							System.out.println("Indique el id del jugador nuevo");
+							idPlayer = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, idPlayer, 0, null, 0, null, 0, 0, filtro, opc);
+							break;
+						case 2:
+							System.out.println("Indique el id del juego nuevo");
+							idGames = sc.nextLong();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, idGames, null, 0, null, 0, 0, filtro, opc);
+							break;
+						case 3:
+							System.out.println("Indica la cosa nueva");
+							cosa = sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, cosa, 0, null, 0, 0, filtro, opc);
+							break;
+						case 4:
+							System.out.println("Indica el precio nuevo");
+							precio = sc.nextDouble();
+							sc.nextLine();
+							FuncionesCompra.modificarCompra(0, 0, 0, null, precio, null, 0, 0, filtro, opc);
+							break;
+						case 5:
+							System.out.println("Indica la fecha nueva:");
+							indiqueAño();
+							indiqueMes();
+							indiqueDia();
+							fechaCompra = crearFecha();
+							FuncionesCompra.modificarCompra(0, opc, opc, OPC_INVALIDA, opc, fechaCompra, 0, 0, filtro,
+									opc);
+							break;
+						default:
+							System.out.println(OPC_INVALIDA);
+						}
+						break;
+					default:
+						System.out.println(OPC_INVALIDA);
+					}
 					break;
 				default:
 					System.out.println(OPC_INVALIDA);
@@ -435,9 +673,30 @@ public class CRUD {
 				break;
 			// Eliminar
 			case 5:
-
+				System.out.println("¿De que tabla quieres borrar?");
+				opcionesEntidades();
+				opc = sc.nextInt();
+				sc.nextLine();
+				switch(opc) {
+				//Eliminar en la tabla Player
+				case 1:
+					System.out.println("Indique el filtro a borrar");
+					
+					break;
+				//Eliminar en la tabla Games
+				case 2:
+					
+					break;
+				//eliminar en la tabla Compras
+				case 3:
+					break;
+				default:
+					System.out.println(OPC_INVALIDA);
+				}
 				break;
-
+			case 0:
+				System.out.println("Saliendo del programa...");
+				break;
 			default:
 				System.out.println(OPC_INVALIDA);
 			}
@@ -449,6 +708,25 @@ public class CRUD {
 		// Cerramos scanner
 		sc.close();
 
+	}
+
+	private static void atributosAModificarCompra() {
+		System.out.println("¿Que quieres modificar?");
+		System.out.println("1. Id Player");
+		System.out.println("2. Id Games");
+		System.out.println("3. Cosa");
+		System.out.println("4. Precio");
+		System.out.println("5. Fecha de la compra");
+	}
+
+	private static Date crearFecha() {
+		return Date.valueOf(LocalDate.of(año, mes, dia));
+	}
+
+	private static void atributosAModificarGames() {
+		System.out.println("¿Que quieres modificar?");
+		System.out.println("1. Nombre");
+		System.out.println("2. Tiempo jugado");
 	}
 
 	private static void atributosAModificarPlayer() {
