@@ -673,7 +673,7 @@ public class CRUD {
 				break;
 			// Eliminar
 			case 5:
-				System.out.println("¿De que tabla quieres borrar?");
+				System.out.println("¿De que elemento de la tabla quieres borrar?");
 				opcionesEntidades();
 				opc = sc.nextInt();
 				sc.nextLine();
@@ -681,11 +681,59 @@ public class CRUD {
 				//Eliminar en la tabla Player
 				case 1:
 					System.out.println("Indique el filtro a borrar");
-					
+					System.out.println("1. Id");
+					System.out.println("2. Nombre");
+					opc = sc.nextInt();
+					sc.nextLine();
+					//Borrar por Id
+					switch(opc) {
+					case 1:
+						FuncionesPlayer.listaPlayers();
+						System.out.println("Indique el id del jugador a eliminar");
+						idPlayer = sc.nextLong();
+						sc.nextLine();
+						FuncionesPlayer.eliminarPlayer(idPlayer, filtro);
+						break;
+					case 2:
+						System.out.println("Indique el nombre o letra del jugador/es a eliminar");
+						filtro = sc.nextLine();
+						FuncionesPlayer.eliminarPlayer(0, filtro);
+						break;
+					default:
+						System.out.println(OPC_INVALIDA);
+					}
 					break;
 				//Eliminar en la tabla Games
 				case 2:
-					
+					System.out.println("Indique el filtro a borrar");
+					System.out.println("1. Id");
+					System.out.println("2. Nombre");
+					System.out.println("3. Tiempo Jugado");
+					opc = sc.nextInt();
+					sc.nextLine();
+					FuncionesGames.listaGames();
+					switch(opc) {
+					case 1:
+						System.out.println("Indica el id del juego a borrar");
+						idGames = sc.nextLong();
+						sc.nextLine();
+						FuncionesGames.eliminarGame(idGames, nombre, tiempoJugado, opc);
+						break;
+					case 2:
+						System.out.println("Indica el nombre del juego/s a borrar");
+						nombre = sc.nextLine();
+						FuncionesGames.eliminarGame(idGames, nombre, tiempoJugado, opc);
+						break;
+					case 3:
+						System.out.println("Indica el tiempo del juego/s a borrar");
+						indicarHoras();
+						indicarMinutos();
+						tiempoJugado = LocalTime.of(hora, min);
+						FuncionesGames.eliminarGame(idGames, nombre, tiempoJugado, opc);
+						break;
+					default:
+						System.out.println(OPC_INVALIDA);
+					}
 					break;
 				//eliminar en la tabla Compras
 				case 3:

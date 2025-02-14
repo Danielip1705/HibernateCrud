@@ -3,6 +3,7 @@ package entidades;
 import java.io.Serializable;
 import java.sql.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -24,13 +25,13 @@ public class Compras implements Serializable{
 	private long idCompras;
 	
 	//Relacion con la tabla player
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_player",
 	foreignKey = @ForeignKey(name = "PLAYER_ID_FK"))
 	private Player player;
 	
 	//Relacion con la tabla games
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_games",
 	foreignKey = @ForeignKey(name = "GAMES_ID_FK"))
 	private Games game;

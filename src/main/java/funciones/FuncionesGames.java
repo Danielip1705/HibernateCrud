@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import accesobd.AccesoBD;
 import entidades.Games;
+import entidades.Player;
 
 public class FuncionesGames {
 
@@ -171,11 +172,7 @@ public class FuncionesGames {
 						break;
 					}
 				}
-				for (Games games : listado) {
-					System.out.println("ID: " + games.getIdGames());
-					System.out.println("Nombre: " + games.getNombre());
-					System.out.println("Tiempo Jugado: " + games.getTiempoJugado().toString());
-				}
+				mostrarListadoGames(listado);
 				confirmacion = confirmarTransac();
 				if(confirmacion.equals("s")) {
 					System.out.println("Transaccion confirmada");
@@ -206,6 +203,84 @@ public class FuncionesGames {
 	}
 	
 	//--------------------------------------------------------------------------------------------
+	//Eliminar
+	
+	public static void eliminarGame(long id,String nombre,LocalTime tiempoJugado,int opc) {
+		Games g = null;
+		List<Games> listado=null;
+		String confirmacion = "";
+		boolean confirmarGames = comprobarGame(id);
+		try {
+			ins.abrir();
+			switch(opc) {
+			case 1:
+				if(confirmarGames) {
+					g = ins.getSesion().get(Games.class, id);
+					System.out.println("ID: " + g.getIdGames());
+					System.out.println("Nombre: " + g.getNombre());
+					System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						ins.getSesion().delete(g);
+						System.out.println("Juego eliminado");
+					}
+				}
+				break;
+			case 2:
+				listado = ins.getSesion().createNativeQuery("SELECT * FROM Games WHERE nombre like :nombre ;",Games.class)
+				.setParameter("nombre", "%"+nombre+"%").getResultList();
+				if(listado.size()>0) {
+					mostrarListadoGames(listado);
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						for (Games games : listado) {
+							ins.getSesion().delete(games);
+						}
+						System.out.println("Juego eliminado");
+					} else {
+						System.out.println("Transaccion cancelada");
+					}
+				} else {
+					System.out.println("No hay juego con el nombre o letra: "+nombre);
+				}
+				break;
+			case 3:
+				listado = ins.getSesion().createNativeQuery("SELECT * FROM Games WHERE  tiempoJugado like :tiempoJugado ;",Games.class)
+				.setParameter("tiempoJugado", tiempoJugado).getResultList();
+				if(listado.size()>0) {
+					mostrarListadoGames(listado);
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						for (Games games : listado) {
+							ins.getSesion().delete(games);
+						}
+						System.out.println("Juego eliminado");
+					} else {
+						System.out.println("Transaccion cancelada");
+					}
+				} else {
+					System.out.println("No hay juego con tiempo jugado: "+nombre);
+				}
+				break;
+			}
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+	private static void mostrarListadoGames(List<Games> listado) {
+		for (Games games : listado) {
+			System.out.println("ID: " + games.getIdGames());
+			System.out.println("Nombre: " + games.getNombre());
+			System.out.println("Tiempo Jugado: " + games.getTiempoJugado().toString());
+		}
+	}
+	
+	//--------------------------------------------------------------------------------------------
 	public static Games buscarGamesId(long id) {
 		Games games = null;
 		try {
@@ -216,5 +291,23 @@ public class FuncionesGames {
 			// TODO: handle exception
 		}
 		return games;
+	}
+	
+	
+	public static boolean comprobarGame(long id) {
+		boolean existe = false;
+		try {
+			ins.abrir();
+			Games p = null;
+			p = ins.getSesion().get(Games.class, id);
+			
+			if(p!=null) {
+				existe = true;
+			}
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return existe;
 	}
 }

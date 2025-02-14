@@ -39,13 +39,7 @@ public class FuncionesPlayer {
 			ins.abrir();
 			List<Player> listadoJugadores = ins.getSesion().createNativeQuery("SELECT * FROM Player",Player.class).getResultList();
 			System.out.println("===========================");
-			for (Player p : listadoJugadores) {
-				System.out.println("IdPlayer: "+p.getIdPlayer());
-				System.out.println("Nick: "+p.getNick());
-				System.out.println("Contraseña: "+p.getPassword());
-				System.out.println("Email: "+p.getEmail());
-				System.out.println("===========================");
-			}
+			mostrarListadoPlayer(listadoJugadores);
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -84,13 +78,7 @@ public class FuncionesPlayer {
 			
 			if(listado.size() >0) {
 				System.out.println("==============================");
-				for (Player p : listado) {
-					System.out.println("IdPlayer: "+p.getIdPlayer());
-					System.out.println("Nick: "+p.getNick());
-					System.out.println("Contraseña: "+p.getPassword());
-					System.out.println("Email: "+p.getEmail());
-					System.out.println("===========================");	
-				}
+				mostrarListadoPlayer(listado);
 			} else {
 				System.out.println("No hay jugador con nombre "+ nombre+" en la BD");
 			}
@@ -110,13 +98,7 @@ public class FuncionesPlayer {
 			
 			if(listado.size()>0) {
 				System.out.println("==============================");
-				for (Player p : listado) {
-					System.out.println("IdPlayer: "+p.getIdPlayer());
-					System.out.println("Nick: "+p.getNick());
-					System.out.println("Contraseña: "+p.getPassword());
-					System.out.println("Email: "+p.getEmail());
-					System.out.println("===========================");	
-				}
+				mostrarListadoPlayer(listado);
 			} else {
 				System.out.println("No hay jugador con email "+ correo+" en la BD");
 			}
@@ -186,14 +168,7 @@ public class FuncionesPlayer {
 						break;
 					}
 				}
-				//For para confirmar transaccion
-				for (Player player : listado) {
-					System.out.println("IdPlayer: "+player.getIdPlayer());
-					System.out.println("Nick: "+player.getNick());
-					System.out.println("Contraseña: "+player.getPassword());
-					System.out.println("Email: "+player.getEmail());
-					System.out.println("===========================");	
-				}
+				mostrarListadoPlayer(listado);
 				confirmacion = confirmarTransac();
 				if(confirmacion.equals("s")) {
 					System.out.println("Transaccion confirmada");
@@ -226,7 +201,76 @@ public class FuncionesPlayer {
 	}
 	
 	//----------------------------------------------------------------------------------------------------
-	public static boolean comprobarJugador(int id) {
+	//Eliminar
+	
+	public static void eliminarPlayer(long id, String nombreFiltro) {
+		Player p = null;
+		List<Player> listado = null;
+		String confirmacion="";
+		boolean confirmarJugador = comprobarJugador(id);
+		try {
+			ins.abrir();
+			
+			if(id!=0) {
+				if(confirmarJugador) {
+					p = ins.getSesion().get(Player.class, id);
+					System.out.println("IdPlayer: "+p.getIdPlayer());
+					System.out.println("Nick: "+p.getNick());
+					System.out.println("Contraseña: "+p.getPassword());
+					System.out.println("Email: "+p.getEmail());
+					System.out.println("================================");
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						ins.getSesion().delete(p);
+						System.out.println("Jugador eliminado");
+					} else {
+						System.out.println("Transaccion cancelada");
+						ins.getTransaction().rollback();
+					}
+				} else {
+					System.out.println("No hay jugador con id: "+id+" en la BD");
+				}
+			} else {
+				listado = ins.getSesion().createNativeQuery("SELECT * FROM Player where nick like :nick ;",Player.class)
+						.setParameter("nick", "%"+nombreFiltro+"%").getResultList();
+				if(listado.size()>0) {
+					mostrarListadoPlayer(listado);
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						for (Player player : listado) {
+							ins.getSesion().delete(player);
+						}
+						System.out.println("Jugadores eliminados");
+					} else {
+						System.out.println("Transaccion candelada");
+						ins.getTransaction().rollback();
+					}
+				} else {
+					System.out.println("No se han encontrado jugador con el nombre o letras: "+nombreFiltro);
+				}
+			}
+			
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+
+
+	private static void mostrarListadoPlayer(List<Player> listado) {
+		for (Player player : listado) {
+			System.out.println("IdPlayer: "+player.getIdPlayer());
+			System.out.println("Nick: "+player.getNick());
+			System.out.println("Contraseña: "+player.getPassword());
+			System.out.println("Email: "+player.getEmail());
+			System.out.println("===========================");	
+		}
+	}
+	
+	//----------------------------------------------------------------------------------------------------
+	public static boolean comprobarJugador(long id) {
 		boolean existe = false;
 		try {
 			ins.abrir();
@@ -254,5 +298,7 @@ public class FuncionesPlayer {
 		}
 		return player;
 	}
+	
+	
 	
 }
