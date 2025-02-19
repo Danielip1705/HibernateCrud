@@ -25,13 +25,13 @@ public class Compras implements Serializable{
 	private long idCompras;
 	
 	//Relacion con la tabla player
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "id_player",
 	foreignKey = @ForeignKey(name = "PLAYER_ID_FK"))
 	private Player player;
 	
 	//Relacion con la tabla games
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "id_games",
 	foreignKey = @ForeignKey(name = "GAMES_ID_FK"))
 	private Games game;

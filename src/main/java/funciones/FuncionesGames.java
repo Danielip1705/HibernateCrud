@@ -1,12 +1,11 @@
 package funciones;
 
-import java.time.LocalTime;
+import java.time.LocalTime; 
 import java.util.List;
 import java.util.Scanner;
 
 import accesobd.AccesoBD;
 import entidades.Games;
-import entidades.Player;
 
 public class FuncionesGames {
 
@@ -126,16 +125,35 @@ public class FuncionesGames {
 		}
 	}
 
+	public static List<Games> obtenerListadoGames() {
+		List<Games> listadoGames = null;
+		try {
+			ins.abrir();
+			listadoGames = ins.getSesion().createNativeQuery("SELECT * FROM Games", Games.class)
+					.getResultList();
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return listadoGames;
+	}
+	
 	// -------------------------------------------------------------------------------------------
 	//Modificar Juego
 	public static void ModificarJuego(long id,String nombreNuevo,String nombreFiltro,LocalTime tiempoNuevo,int filtro) {
 		Games g = null;
 		String confirmacion ="";
+		boolean comprobarGame = comprobarGame(id);
 		List<Games> listado = null;
 		try {
 			ins.abrir();
 			if(id!=0) {
-				g = ins.getSesion().get(Games.class, id);
+				if(comprobarGame) {
+					g = ins.getSesion().get(Games.class, id);					
+				} else {
+					System.out.println("No se pudo modificar");
+					System.out.println("El id "+ id +" no existe en la bd");
+				}
 			} else {
 				listado = ins.getSesion().createNativeQuery("SELECT * FROM Games where nombre like :nombre ;",Games.class)
 						.setParameter("nombre", "%"+nombreFiltro+"%").getResultList();
@@ -146,6 +164,10 @@ public class FuncionesGames {
 					g.setNombre(nombreNuevo);
 					break;
 				case 2:
+					g.setTiempoJugado(tiempoNuevo);
+					break;
+				case 3:
+					g.setNombre(nombreNuevo);
 					g.setTiempoJugado(tiempoNuevo);
 					break;
 				}
@@ -170,6 +192,10 @@ public class FuncionesGames {
 					case 2:
 						games.setTiempoJugado(tiempoNuevo);
 						break;
+					case 3:
+						games.setNombre(nombreNuevo);
+						games.setTiempoJugado(tiempoNuevo);
+						break;
 					}
 				}
 				mostrarListadoGames(listado);
@@ -183,6 +209,9 @@ public class FuncionesGames {
 					System.out.println("Transaccion cancelada");
 					ins.getTransaction().rollback();
 				}
+			} else {
+				System.out.println("No se pudo modificar");
+				System.out.println("No existe el nombre o letra "+ nombreFiltro);
 			}
 			ins.cerrar();
 		} catch (Exception e) {
@@ -210,6 +239,7 @@ public class FuncionesGames {
 		List<Games> listado=null;
 		String confirmacion = "";
 		boolean confirmarGames = comprobarGame(id);
+		List<Games> listadoGames = obtenerListadoGames();
 		try {
 			ins.abrir();
 			switch(opc) {
@@ -225,6 +255,8 @@ public class FuncionesGames {
 						ins.getSesion().delete(g);
 						System.out.println("Juego eliminado");
 					}
+				} else {
+					System.out.println("El id" + id +" no existe en la base de datos");
 				}
 				break;
 			case 2:
@@ -265,6 +297,20 @@ public class FuncionesGames {
 					System.out.println("No hay juego con tiempo jugado: "+nombre);
 				}
 				break;
+			case 4:
+				if(listadoGames.size() > 0) {
+					mostrarListadoGames(listadoGames);
+					confirmacion = confirmarTransac();
+					if(confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						for (Games games : listadoGames) {
+							ins.getSesion().delete(games);
+						}
+						System.out.println("Juego eliminado");
+					} else {
+						System.out.println("Transaccion cancelada");
+					}
+				}
 			}
 			ins.cerrar();
 		} catch (Exception e) {
@@ -272,11 +318,12 @@ public class FuncionesGames {
 		}
 	}
 
-	private static void mostrarListadoGames(List<Games> listado) {
+	public static void mostrarListadoGames(List<Games> listado) {
 		for (Games games : listado) {
 			System.out.println("ID: " + games.getIdGames());
 			System.out.println("Nombre: " + games.getNombre());
 			System.out.println("Tiempo Jugado: " + games.getTiempoJugado().toString());
+			System.out.println("==========================================");
 		}
 	}
 	

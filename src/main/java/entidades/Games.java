@@ -2,6 +2,7 @@ package entidades;
 import java.io.Serializable;
 import java.sql.Time;
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -19,6 +20,10 @@ public class Games implements Serializable {
 	
 	@Column(name="tiempoJugado")
 	private LocalTime tiempoJugado;
+	
+	@OneToMany(cascade=CascadeType.ALL)
+	@JoinColumn(name = "id_games")
+	private List<Compras> listado;
 	
 	public Games() {
 		
