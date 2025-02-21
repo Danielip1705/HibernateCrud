@@ -46,8 +46,12 @@ public class FuncionesCompra {
 			ins.abrir();
 			List<Compras> listadoCompras = ins.getSesion().createNativeQuery("SELECT * FROM Compras", Compras.class)
 					.getResultList();
-			System.out.println("===========================");
-			mostrarCompra(listadoCompras);
+			if (listadoCompras.size() > 0) {
+				System.out.println("===========================");
+				mostrarCompra(listadoCompras);
+			} else {
+				System.out.println("No existe compras en la BD");
+			}
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -70,7 +74,7 @@ public class FuncionesCompra {
 				System.out.println("Fecha Registro: " + c.getFechaCompra().toString());
 				System.out.println("===========================");
 			} else {
-				System.out.println("No se ha encontrado la compra");
+				System.out.println("No se ha encontrado la compra con id: " + id);
 			}
 			ins.cerrar();
 		} catch (Exception e) {
@@ -132,7 +136,7 @@ public class FuncionesCompra {
 				System.out.println("==============================");
 				mostrarCompra(listado);
 			} else {
-				System.out.println("No hay compra con objeto " + objeto + " en la BD");
+				System.out.println("No hay compra con nombre de objeto: " + objeto + " en la BD");
 			}
 			ins.cerrar();
 		} catch (Exception e) {
@@ -251,9 +255,12 @@ public class FuncionesCompra {
 		Player p = null;
 		Games g = null;
 		String confirmacion = "";
+		boolean seModifica = false;
 		boolean confirmarCompra = comprobarCompra(id);
 		boolean confirmarJugador = FuncionesPlayer.comprobarJugador(idPlayerFiltro);
 		boolean confirmarGames = FuncionesGames.comprobarGame(idGamesFiltro);
+		boolean confirmarJugadorNuevo = FuncionesPlayer.comprobarJugador(idPlayer);
+		boolean confirmarGamesNuevo = FuncionesGames.comprobarGame(idGames);
 		List<Compras> listado = null;
 		try {
 			ins.abrir();
@@ -288,6 +295,7 @@ public class FuncionesCompra {
 				case 1:
 					p = FuncionesPlayer.obtenerJugadorId(idPlayer);
 					c.setPlayer(p);
+
 					break;
 				case 2:
 					g = FuncionesGames.buscarGamesId(idGames);
@@ -298,9 +306,11 @@ public class FuncionesCompra {
 					break;
 				case 4:
 					c.setPrecio(precio);
+
 					break;
 				case 5:
 					c.setFechaCompra(fechaCompra);
+
 					break;
 				case 6:
 					p = FuncionesPlayer.obtenerJugadorId(idPlayer);
@@ -312,54 +322,80 @@ public class FuncionesCompra {
 					c.setFechaCompra(fechaCompra);
 					break;
 				}
-				System.out.println("IdCompras: " + c.getIdCompras());
-				System.out.println("IdPlayer: " + c.getPlayer().getIdPlayer());
-				System.out.println("IdGames: " + c.getGame().getIdGames());
-				System.out.println("Cosa : " + c.getCosa());
-				System.out.println("Precio: " + c.getPrecio());
-				System.out.println("Fecha Registro: " + c.getFechaCompra().toString());
-				System.out.println("===========================");
-				confirmacion = confirmarTransac();
-				if (confirmacion.equals("s")) {
-					System.out.println("Transaccion confirmada");
-					ins.getSesion().update(c);
-					System.out.println("Compra modificada");
-					System.out.println();
-				} else {
-					System.out.println("Transaccion cancelada");
-					ins.getTransaction().rollback();
+				if (seModifica) {
+					System.out.println("IdCompras: " + c.getIdCompras());
+					System.out.println("IdPlayer: " + c.getPlayer().getIdPlayer());
+					System.out.println("IdGames: " + c.getGame().getIdGames());
+					System.out.println("Cosa : " + c.getCosa());
+					System.out.println("Precio: " + c.getPrecio());
+					System.out.println("Fecha Registro: " + c.getFechaCompra().toString());
+					System.out.println("===========================");
+					confirmacion = confirmarTransac();
+					if (confirmacion.equals("s")) {
+						System.out.println("Transaccion confirmada");
+						ins.getSesion().update(c);
+						System.out.println("Compra modificada");
+						System.out.println();
+					} else {
+						System.out.println("Transaccion cancelada");
+						ins.getTransaction().rollback();
+					}
 				}
 			} else if (listado.size() > 0) {
 				for (Compras com : listado) {
 					switch (opc) {
 					case 1:
-						p = FuncionesPlayer.obtenerJugadorId(idPlayer);
-						com.setPlayer(p);
+						if (confirmarJugadorNuevo) {
+							p = FuncionesPlayer.obtenerJugadorId(idPlayer);
+							com.setPlayer(p);
+
+						} else {
+							System.out.println("El id del jugador: " + idPlayer + " no existe en la BD");
+						}
 						break;
 					case 2:
-						g = FuncionesGames.buscarGamesId(idGames);
-						com.setGame(g);
+						if (confirmarGamesNuevo) {
+							g = FuncionesGames.buscarGamesId(idGames);
+							com.setGame(g);
+
+						} else {
+							System.out.println("El id del juego: " + idGames + " no existe en la BD");
+						}
 						break;
 					case 3:
 						com.setCosa(cosa);
+
 						break;
 					case 4:
 						com.setPrecio(precio);
+
 						break;
 					case 5:
 						com.setFechaCompra(fechaCompra);
+
 						break;
 					case 6:
-						p = FuncionesPlayer.obtenerJugadorId(idPlayer);
-						com.setPlayer(p);
-						g = FuncionesGames.buscarGamesId(idGames);
-						com.setGame(g);
+						if (confirmarJugadorNuevo) {
+							p = FuncionesPlayer.obtenerJugadorId(idPlayer);
+							com.setPlayer(p);
+						} else {
+							System.out.println("El id del jugador: " + idPlayer + " no existe en la BD");
+							break;
+						}
+						if (confirmarGamesNuevo) {
+							g = FuncionesGames.buscarGamesId(idGames);
+							com.setGame(g);
+						} else {
+							System.out.println("El id del juego: " + idGames + " no existe en la BD");
+							break;
+						}
 						com.setCosa(cosa);
 						com.setPrecio(precio);
 						com.setFechaCompra(fechaCompra);
 						break;
 					}
 				}
+
 				mostrarCompra(listado);
 				confirmacion = confirmarTransac();
 				if (confirmacion.equals("s")) {
@@ -371,8 +407,9 @@ public class FuncionesCompra {
 				} else {
 					System.out.println("Transaccion cancelada");
 				}
+
 			} else {
-				System.out.println("No existe cosa con el nombre o letra "+ cosaFiltro+ " en la BD");
+				System.out.println("No existe cosa con el nombre o letra " + cosaFiltro + " en la BD");
 			}
 			ins.cerrar();
 		} catch (Exception e) {

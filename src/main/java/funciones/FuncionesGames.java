@@ -38,17 +38,25 @@ public class FuncionesGames {
 			ins.abrir();
 			List<Games> listadoGames = ins.getSesion().createNativeQuery("SELECT * FROM Games", Games.class)
 					.getResultList();
-			System.out.println("===========================");
-			for (Games g : listadoGames) {
-				System.out.println("IdGames: " + g.getIdGames());
-				System.out.println("Nombre: " + g.getNombre());
-				System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
-				System.out.println("===========================");
+			if(listadoGames.size()>0) {
+				mostrarJuegos(listadoGames);				
+			} else {
+				System.out.println("No hay juegos en la BD");
 			}
 
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception
+		}
+	}
+
+	private static void mostrarJuegos(List<Games> listadoGames) {
+		System.out.println("===========================");
+		for (Games g : listadoGames) {
+			System.out.println("IdGames: " + g.getIdGames());
+			System.out.println("Nombre: " + g.getNombre());
+			System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
+			System.out.println("===========================");
 		}
 	}
 
@@ -64,7 +72,7 @@ public class FuncionesGames {
 				System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
 				System.out.println("===========================");
 			} else {
-				System.out.println("No se ha encontrado el juego");
+				System.out.println("No se ha encontrado el juego con id: " + id);
 			}
 			ins.cerrar();
 		} catch (Exception e) {

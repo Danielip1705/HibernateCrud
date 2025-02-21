@@ -106,10 +106,18 @@ public class CRUD {
 					System.out.println("Indique el id del jugador");
 					idPlayer = sc.nextInt();
 					sc.nextLine();
+					if (!FuncionesPlayer.comprobarJugador(idPlayer)) {
+						System.out.println("No existe el id del jugador: " + idPlayer + " en la BD");
+						break;
+					}
 					player = FuncionesPlayer.obtenerJugadorId(idPlayer);
 					System.out.println("Indique el id del juego");
 					idGames = sc.nextInt();
 					sc.nextLine();
+					if (!FuncionesGames.comprobarGame(idGames)) {
+						System.out.println("No existe el id del juego: " + idGames + " en la BD");
+						break;
+					}
 					game = FuncionesGames.buscarGamesId(idGames);
 					System.out.println("Indique el producto que ha comprado el jugador");
 					cosa = sc.nextLine();
@@ -141,6 +149,7 @@ public class CRUD {
 				sc.nextLine();
 				// Switch segun la entidad seleccionada
 				switch (opc) {
+				// Filtrado de jugadores
 				case 1:
 					System.out.println("¿Como quieres listarlo?");
 					System.out.println("1. Todos");
@@ -149,6 +158,7 @@ public class CRUD {
 					System.out.println("4. Correo");
 					opc = sc.nextInt();
 					sc.nextLine();
+					// Filtro de jugadores
 					switch (opc) {
 					case 1:
 						FuncionesPlayer.listaPlayers();
@@ -173,7 +183,7 @@ public class CRUD {
 
 					}
 					break;
-
+				// Filtrado de games
 				case 2:
 					System.out.println("¿Como quieres listarlo?");
 					System.out.println("1. Todos");
@@ -182,6 +192,7 @@ public class CRUD {
 					System.out.println("4. Tiempo Jugado");
 					opc = sc.nextInt();
 					sc.nextLine();
+					// Filtrado segun la opcion elegida
 					switch (opc) {
 					case 1:
 						FuncionesGames.listaGames();
@@ -345,6 +356,7 @@ public class CRUD {
 					System.out.println("2. Por Nick");
 					opc = sc.nextInt();
 					sc.nextLine();
+					
 					FuncionesPlayer.listaPlayers();
 					// Filtro elegido
 					switch (opc) {
@@ -352,6 +364,10 @@ public class CRUD {
 						System.out.println("Indica el id de la persona a modificar");
 						idPlayer = sc.nextLong();
 						sc.nextLine();
+						if(!FuncionesPlayer.comprobarJugador(idPlayer)) {
+							System.out.println("No existe el id del jugador: " +idPlayer + " en la BD");
+							break;
+						}
 						atributosAModificarPlayer();
 						opc = sc.nextInt();
 						sc.nextLine();
@@ -432,6 +448,7 @@ public class CRUD {
 					System.out.println("2. Nombre");
 					opc = sc.nextInt();
 					sc.nextLine();
+
 					FuncionesGames.listaGames();
 					// Filtro elegido
 					switch (opc) {
@@ -440,6 +457,10 @@ public class CRUD {
 						System.out.println("Indica el id a modificar");
 						idGames = sc.nextLong();
 						sc.nextLine();
+						if(!FuncionesGames.comprobarGame(idGames)) {
+							System.out.println("No existe el id del juego: " +idGames + " en la BD");
+							break;
+						}
 						atributosAModificarGames();
 						opc = sc.nextInt();
 						sc.nextLine();
@@ -532,12 +553,20 @@ public class CRUD {
 							System.out.println("Indique el id del jugador nuevo");
 							idPlayer = sc.nextLong();
 							sc.nextLine();
+							if (!FuncionesPlayer.comprobarJugador(idPlayer)) {
+								System.out.println("No existe el id del jugador: " + idPlayer + " en la BD");
+								break;
+							}
 							FuncionesCompra.modificarCompra(idCompra, idPlayer, 0, null, 0, null, 0, 0, null, opc);
 							break;
 						case 2:
 							System.out.println("Indique el id del juego nuevo");
 							idGames = sc.nextLong();
 							sc.nextLine();
+							if (!FuncionesGames.comprobarGame(idGames)) {
+								System.out.println("No existe el id del juego: " + idGames + " en la BD");
+								break;
+							}
 							FuncionesCompra.modificarCompra(idCompra, 0, idGames, null, 0, null, 0, 0, null, opc);
 							break;
 						case 3:
@@ -564,9 +593,17 @@ public class CRUD {
 							System.out.println("Indique el id del jugador nuevo");
 							idPlayer = sc.nextLong();
 							sc.nextLine();
+							if (!FuncionesPlayer.comprobarJugador(idPlayer)) {
+								System.out.println("No existe el id del jugador: " + idPlayer + " en la BD");
+								break;
+							}
 							System.out.println("Indique el id del juego nuevo");
 							idGames = sc.nextLong();
 							sc.nextLine();
+							if (!FuncionesGames.comprobarGame(idGames)) {
+								System.out.println("No existe el id del juego: " + idGames + " en la BD");
+								break;
+							}
 							System.out.println("Indica la cosa nueva");
 							cosa = sc.nextLine();
 							System.out.println("Indica el precio nuevo");
@@ -577,7 +614,8 @@ public class CRUD {
 							indiqueMes();
 							indiqueDia();
 							fechaCompra = crearFecha();
-							FuncionesCompra.modificarCompra(idCompra, idPlayer, idGames, cosa, precio, fechaCompra, 0, 0, null, opc);
+							FuncionesCompra.modificarCompra(idCompra, idPlayer, idGames, cosa, precio, fechaCompra, 0,
+									0, null, opc);
 							sc.nextLine();
 							break;
 						default:
@@ -589,6 +627,10 @@ public class CRUD {
 						System.out.println("Indique el id del jugador a modificar");
 						playerFiltroId = sc.nextLong();
 						sc.nextLine();
+						if(!FuncionesPlayer.comprobarJugador(playerFiltroId)) {
+							System.out.println("No existe el id del jugador: " +idPlayer + " en la BD");
+							break;
+						}
 						atributosAModificarCompra();
 						opc = sc.nextInt();
 						sc.nextLine();
@@ -643,7 +685,8 @@ public class CRUD {
 							indiqueMes();
 							indiqueDia();
 							fechaCompra = crearFecha();
-							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra, playerFiltroId, 0, null, opc);
+							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra,
+									playerFiltroId, 0, null, opc);
 							sc.nextLine();
 							break;
 						default:
@@ -655,6 +698,10 @@ public class CRUD {
 						System.out.println("Indique el id del juego a modificar");
 						gameFiltroId = sc.nextLong();
 						sc.nextLine();
+						if(!FuncionesGames.comprobarGame(gameFiltroId)) {
+							System.out.println("No existe el id del juego: " +idGames + " en la BD");
+							break;
+						}
 						atributosAModificarCompra();
 						opc = sc.nextInt();
 						sc.nextLine();
@@ -708,7 +755,8 @@ public class CRUD {
 							indiqueMes();
 							indiqueDia();
 							fechaCompra = crearFecha();
-							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra, 0, gameFiltroId, null, opc);
+							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra, 0,
+									gameFiltroId, null, opc);
 							sc.nextLine();
 							break;
 						default:
@@ -771,7 +819,8 @@ public class CRUD {
 							indiqueMes();
 							indiqueDia();
 							fechaCompra = crearFecha();
-							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra, 0, 0, filtro, opc);
+							FuncionesCompra.modificarCompra(0, idPlayer, idGames, cosa, precio, fechaCompra, 0, 0,
+									filtro, opc);
 							sc.nextLine();
 							break;
 						default:
@@ -792,11 +841,11 @@ public class CRUD {
 				System.out.println("1. Player");
 				System.out.println("2. Games");
 				System.out.println("3. Compras");
-				System.out.println("4. Todas los datos de las tablas");
+				System.out.println("4. Todos los datos de las tablas");
 				opc = sc.nextInt();
 				sc.nextLine();
-				switch(opc) {
-				//Eliminar en la tabla Player
+				switch (opc) {
+				// Eliminar en la tabla Player
 				case 1:
 					System.out.println("Indique el filtro a borrar");
 					System.out.println("1. Id");
@@ -804,19 +853,19 @@ public class CRUD {
 					System.out.println("3. Todos");
 					opc = sc.nextInt();
 					sc.nextLine();
-					//Borrar por Id
-					switch(opc) {
+					// Borrar por Id
+					switch (opc) {
 					case 1:
 						FuncionesPlayer.listaPlayers();
 						System.out.println("Indique el id del jugador a eliminar");
 						idPlayer = sc.nextLong();
 						sc.nextLine();
-						FuncionesPlayer.eliminarPlayer(idPlayer, filtro,opc);
+						FuncionesPlayer.eliminarPlayer(idPlayer, filtro, opc);
 						break;
 					case 2:
 						System.out.println("Indique el nombre o letra del jugador/es a eliminar");
 						filtro = sc.nextLine();
-						FuncionesPlayer.eliminarPlayer(0, filtro,opc);
+						FuncionesPlayer.eliminarPlayer(0, filtro, opc);
 						break;
 					case 3:
 						FuncionesPlayer.eliminarPlayer(idPlayer, filtro, opc);
@@ -825,7 +874,7 @@ public class CRUD {
 						System.out.println(OPC_INVALIDA);
 					}
 					break;
-				//Eliminar en la tabla Games
+				// Eliminar en la tabla Games
 				case 2:
 					System.out.println("Indique el filtro a borrar");
 					System.out.println("1. Id");
@@ -835,7 +884,7 @@ public class CRUD {
 					opc = sc.nextInt();
 					sc.nextLine();
 					FuncionesGames.listaGames();
-					switch(opc) {
+					switch (opc) {
 					case 1:
 						System.out.println("Indica el id del juego a borrar");
 						idGames = sc.nextLong();
@@ -861,7 +910,7 @@ public class CRUD {
 						System.out.println(OPC_INVALIDA);
 					}
 					break;
-				//eliminar en la tabla Compras
+				// eliminar en la tabla Compras
 				case 3:
 					System.out.println("Indique el filtro a borrar");
 					System.out.println("1. Id");
@@ -871,9 +920,9 @@ public class CRUD {
 					opc = sc.nextInt();
 					sc.nextLine();
 					FuncionesCompra.listaCompras();
-					//Switch para filtrado eliminar
-					switch(opc) {
-					//Por id de la compra
+					// Switch para filtrado eliminar
+					switch (opc) {
+					// Por id de la compra
 					case 1:
 						System.out.println("Indique el id de la compra a eliminar");
 						idCompra = sc.nextLong();

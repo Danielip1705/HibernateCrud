@@ -39,8 +39,12 @@ public class FuncionesPlayer {
 			ins.abrir();
 			List<Player> listadoJugadores = ins.getSesion().createNativeQuery("SELECT * FROM Player", Player.class)
 					.getResultList();
-			System.out.println("===========================");
-			mostrarListadoPlayer(listadoJugadores);
+			if(listadoJugadores.size()>0) {
+				System.out.println("===========================");
+				mostrarListadoPlayer(listadoJugadores);				
+			} else {
+				System.out.println("No hay jugadores en la BD");
+			}
 			ins.cerrar();
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -60,7 +64,7 @@ public class FuncionesPlayer {
 				System.out.println("Email: " + p.getEmail());
 				System.out.println("===========================");
 			} else {
-				System.out.println("No se ha encontrado el jugador");
+				System.out.println("No se ha encontrado el jugador con id: " + id);
 			}
 			ins.cerrar();
 		} catch (Exception e) {
