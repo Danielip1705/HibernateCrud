@@ -249,6 +249,7 @@ public class FuncionesPlayer {
 					System.out.println("Contraseña: " + p.getPassword());
 					System.out.println("Email: " + p.getEmail());
 					System.out.println("================================");
+					System.out.println("AVISO: Si eliminas a este jugador se eliminara de la tabla Compras");
 					confirmacion = confirmarTransac();
 					if (confirmacion.equals("s")) {
 						System.out.println("Transaccion confirmada");
@@ -268,6 +269,7 @@ public class FuncionesPlayer {
 						.setParameter("nick", "%" + nombreFiltro + "%").getResultList();
 				if (listado.size() > 0) {
 					mostrarListadoPlayer(listado);
+					System.out.println("AVISO: Si eliminas a estos jugadores se eliminaran de la tabla Compras");
 					confirmacion = confirmarTransac();
 					if (confirmacion.equals("s")) {
 						System.out.println("Transaccion confirmada");
@@ -357,4 +359,15 @@ public class FuncionesPlayer {
 		return player;
 	}
 
+	public static void eliminarPlayer(long id) {
+		Player p = obtenerJugadorId(id);
+		try {
+			ins.abrir();
+			ins.getSesion().delete(p);
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
 }

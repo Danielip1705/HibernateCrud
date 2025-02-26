@@ -548,4 +548,15 @@ public class FuncionesCompra {
 		}
 		return existe;
 	}
+	public static void eliminarPlayer(long id) {
+		Compras c = null;
+		try {
+			ins.abrir();
+			c = ins.getSesion().get(Compras.class, id);
+			ins.getSesion().delete(c);
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
 }

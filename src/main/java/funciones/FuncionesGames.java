@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import accesobd.AccesoBD;
 import entidades.Games;
+import entidades.Player;
 
 public class FuncionesGames {
 
@@ -257,6 +258,7 @@ public class FuncionesGames {
 					System.out.println("ID: " + g.getIdGames());
 					System.out.println("Nombre: " + g.getNombre());
 					System.out.println("Tiempo Jugado: " + g.getTiempoJugado().toString());
+					System.out.println("AVISO: Si eliminas este juego se eliminara de la tabla Compras");
 					confirmacion = confirmarTransac();
 					if(confirmacion.equals("s")) {
 						System.out.println("Transaccion confirmada");
@@ -272,6 +274,7 @@ public class FuncionesGames {
 				.setParameter("nombre", "%"+nombre+"%").getResultList();
 				if(listado.size()>0) {
 					mostrarListadoGames(listado);
+					System.out.println("AVISO: si eliminas estos juegos se eliminaran de la tabla Compras");
 					confirmacion = confirmarTransac();
 					if(confirmacion.equals("s")) {
 						System.out.println("Transaccion confirmada");
@@ -364,5 +367,15 @@ public class FuncionesGames {
 			// TODO: handle exception
 		}
 		return existe;
+	}
+	public static void eliminarJuego(long id) {
+		Games g = buscarGamesId(id);
+		try {
+			ins.abrir();
+			ins.getSesion().delete(g);
+			ins.cerrar();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 	}
 }
